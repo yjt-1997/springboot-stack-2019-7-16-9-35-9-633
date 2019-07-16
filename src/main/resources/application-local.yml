@@ -1,4 +1,5 @@
-
+Server:
+  port: 8088
 
 logging.file: logs/application.log
 logging:
