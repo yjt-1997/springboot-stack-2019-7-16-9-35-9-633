@@ -18,8 +18,16 @@ public class EmployeeRepository {
         employees.put(13, new Employee(4, "huiwei1", 20, "male", 8000));
     }
 
-    public void updateOrSave(Employee employee) {
-
+    public Employee updateOrSave(Employee employee) {
+        boolean isContains = findAll().stream().anyMatch(employee1 -> employee.getId() == employee.getId());
+        if (isContains) {
+            employees.put(employee.getId(), employee);
+        } else {
+            int id = new Random().nextInt();
+            employee.setId(id);
+            employees.put(id, employee);
+        }
+        return employee;
     }
 
     public List<Employee> findAll() {
@@ -43,5 +51,21 @@ public class EmployeeRepository {
             result.add(employeesValues.get(i));
         }
         return result;
+    }
+
+    public List<Employee> findByGender(String gender) {
+        List<Employee> result = new ArrayList<>();
+        List<Employee> employeesValues = findAll();
+        for (int i = 0; i < employeesValues.size(); i++) {
+            if (employeesValues.get(i).getGender().equals(gender))
+                result.add(employeesValues.get(i));
+        }
+        return result;
+        //return findAll().stream().filter(employee -> employee.getGender().equals(gender)).collect(Collectors.toList());
+    }
+
+    public void deleteById(int employeeId) {
+        Employee employee = employees.get(employeeId);
+        employees.remove(employee);
     }
 }

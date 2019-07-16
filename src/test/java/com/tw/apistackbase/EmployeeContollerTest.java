@@ -5,6 +5,7 @@ import com.tw.apistackbase.entity.Employee;
 import com.tw.apistackbase.service.EmployeeService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentMatchers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -16,7 +17,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.*;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
@@ -78,4 +79,73 @@ public class EmployeeContollerTest {
                 .andExpect(jsonPath("$[0].id", is(6)))
                 .andExpect(jsonPath("$[1].id", is(18)));
     }
+
+    @Test
+    void should_return_match_gender_list_when_invoke_by_gender() throws Exception {
+        List<Employee> employees = new ArrayList<>();
+        employees.add(new Employee(4, "alibaba1", 20, "male", 6000));
+        employees.add(new Employee(11, "tengxun2", 19, "female", 7000));
+
+
+        when(employeeService.findByGender(anyString())).thenReturn(employees);
+
+        ResultActions resultActions = mvc.perform(get("/employees?gender={gender}", "female"));
+        resultActions.andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].id", is(11)))
+                .andExpect(jsonPath("$[1].id", is(11)));
+
+    }
+
+    @Test
+    void should_add_employee_when_add_given_employee() throws Exception {
+        List<Employee> employees = new ArrayList<>();
+        employees.add(new Employee(4, "alibaba1", 20, "male", 6000));
+        employees.add(new Employee(11, "tengxun2", 19, "female", 7000));
+
+
+        Employee employee = new Employee(6, "alibaba3", 19, "male", 8000);
+        Class classz = Employee.class;
+
+        //when(employeeService.updateOrSave(any(Class<Employee>))).thenReturn(employee);
+
+        ResultActions resultActions = mvc.perform(get("/employees?gender={gender}", "female"));
+//        resultActions.andExpect(status().isOk())
+//                .andExpect(jsonPath("$[2].id", is(6)));
+
+    }
+
+    @Test
+    void should_update_employee_when_add_given_employee() throws Exception {
+        List<Employee> employees = new ArrayList<>();
+        employees.add(new Employee(4, "alibaba1", 20, "male", 6000));
+        employees.add(new Employee(11, "tengxun2", 19, "female", 7000));
+
+
+        Employee employee = new Employee(6, "alibaba3", 19, "male", 8000);
+        Class classz = Employee.class;
+
+        //when(employeeService.updateOrSave(any(Class<Employee>))).thenReturn(employee);
+
+        ResultActions resultActions = mvc.perform(get("/employees?gender={gender}", "female"));
+//        resultActions.andExpect(status().isOk())
+//                .andExpect(jsonPath("$[2].id", is(6)));
+
+    }
+
+    @Test
+    void should_delete_employee_when_delete_given_employeeId() throws Exception {
+        List<Employee> employees = new ArrayList<>();
+        employees.add(new Employee(4, "alibaba1", 20, "male", 6000));
+        employees.add(new Employee(11, "tengxun2", 19, "female", 7000));
+
+
+
+        //when(employeeService.deleteById(anyInt())).thenReturn(employees);
+
+        ResultActions resultActions = mvc.perform(get("/employees?gender={gender}", "female"));
+//        resultActions.andExpect(status().isOk())
+//                .andExpect(jsonPath("$[2].id", is(6)));
+
+    }
+
 }

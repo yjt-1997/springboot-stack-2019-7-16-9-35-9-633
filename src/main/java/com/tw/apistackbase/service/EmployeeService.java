@@ -24,4 +24,16 @@ public class EmployeeService {
     public List<Employee> findByPageAndSize(int page, int pageSize) {
         return employeeRepository.findByPageAndSize(page,pageSize);
     }
+
+    public List<Employee> findByGender(String gender) {
+        return employeeRepository.findByGender(gender);
+    }
+
+    public Employee updateOrSave(Employee employee) {
+        return employeeRepository.updateOrSave(employee);
+    }
+
+    public void deleteById(int employeeId) {
+        employeeRepository.deleteById(employeeId);
+    }
 }

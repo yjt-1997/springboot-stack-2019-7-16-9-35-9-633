@@ -3,10 +3,7 @@ package com.tw.apistackbase.controller;
 import com.tw.apistackbase.entity.Employee;
 import com.tw.apistackbase.service.EmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -29,5 +26,20 @@ public class EmployeeController {
     @GetMapping(value = "/employees", params = {"page", "pageSize"})
     public List<Employee> getByPageAndSize(@RequestParam int page, @RequestParam int pageSize) {
         return employeeService.findByPageAndSize(page, pageSize);
+    }
+
+    @GetMapping(value = "/employees", params = {"gender"})
+    public List<Employee> getByGender(@RequestParam String gender) {
+        return employeeService.findByGender(gender);
+    }
+
+    @RequestMapping(value = "/employees", params = {"employee"}, method = {RequestMethod.POST, RequestMethod.PUT})
+    public Employee updateOrSave(@RequestBody Employee employee) {
+        return employeeService.updateOrSave(employee);
+    }
+
+    @DeleteMapping("/employees/{employeeId}")
+    public void getByGender(@PathVariable int employeeId) {
+        employeeService.deleteById(employeeId);
     }
 }
