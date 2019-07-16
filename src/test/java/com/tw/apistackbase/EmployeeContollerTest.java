@@ -50,13 +50,22 @@ public class EmployeeContollerTest {
                 .andExpect(jsonPath("$[1].id", is(11)));
     }
 
+    /**
+     * 现在有一个困惑，一个方法的具体实现的代码是写在repository类里面还是在哪？
+     * 如果写在repository里面的话，mock的service，对repository类的具体实现并没有调用
+     * 而是我们在thenReturn()方法里面直接把结果返回给service类
+     * 然后service直接return到controller类
+     * 所以我们在thenReturn方法里面传进去的参数其实就是我们的答案
+     * 并没有对这个参数做任何修改，原原本本的返回出来了
+     * @throws Exception
+     */
     @Test
     void should_return_match_employee_when_invoke_findById() throws Exception {
         List<Employee> employees = new ArrayList<>();
         employees.add(new Employee(4, "alibaba1", 20, "male", 6000));
         employees.add(new Employee(11, "tengxun2", 19, "female", 7000));
 
-        when(employeeService.findById(anyInt())).thenReturn(employees.get(0));
+        //when(employeeService.findById(anyInt())).thenReturn(employees);
 
         ResultActions resultActions = mvc.perform(get("/employees/{employeeId}", 4));
         resultActions.andExpect(status().isOk()).andExpect(jsonPath("$.id", is(4)));
@@ -72,9 +81,10 @@ public class EmployeeContollerTest {
         List<Employee> filterEmployees = new ArrayList<>(Arrays.asList(employee3, employee4));
 
 
-        when(employeeService.findByPageAndSize(anyInt(), anyInt())).thenReturn(filterEmployees);
+        //when(employeeService.findByPageAndSize(anyInt(), anyInt())).thenReturn(employees);
+        when(employeeService.findByPageAndSize(2, 2)).thenReturn(employees);
 
-        ResultActions resultActions = mvc.perform(get("/employees?page={page}&pageSize={pageSize}", 2, 2));
+        ResultActions resultActions = mvc.perform(get("/employees?page=2&pageSize=2", 2, 2));
         resultActions.andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].id", is(6)))
                 .andExpect(jsonPath("$[1].id", is(18)));
@@ -91,7 +101,7 @@ public class EmployeeContollerTest {
 
         ResultActions resultActions = mvc.perform(get("/employees?gender={gender}", "female"));
         resultActions.andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].id", is(11)))
+                .andExpect(jsonPath("$[0].id", is(4)))
                 .andExpect(jsonPath("$[1].id", is(11)));
 
     }
@@ -104,13 +114,12 @@ public class EmployeeContollerTest {
 
 
         Employee employee = new Employee(6, "alibaba3", 19, "male", 8000);
-        Class classz = Employee.class;
 
-        //when(employeeService.updateOrSave(any(Class<Employee>))).thenReturn(employee);
+        when(employeeService.updateOrSave(ArgumentMatchers.any())).thenReturn(employee);
 
         ResultActions resultActions = mvc.perform(get("/employees?gender={gender}", "female"));
-//        resultActions.andExpect(status().isOk())
-//                .andExpect(jsonPath("$[2].id", is(6)));
+        resultActions.andExpect(status().isOk())
+                .andExpect(jsonPath("$[2].id", is(6)));
 
     }
 
@@ -137,7 +146,6 @@ public class EmployeeContollerTest {
         List<Employee> employees = new ArrayList<>();
         employees.add(new Employee(4, "alibaba1", 20, "male", 6000));
         employees.add(new Employee(11, "tengxun2", 19, "female", 7000));
-
 
 
         //when(employeeService.deleteById(anyInt())).thenReturn(employees);

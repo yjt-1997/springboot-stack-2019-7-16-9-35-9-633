@@ -24,7 +24,7 @@ public class EmployeeController {
     }
 
     @GetMapping(value = "/employees", params = {"page", "pageSize"})
-    public List<Employee> getByPageAndSize(@RequestParam int page, @RequestParam int pageSize) {
+    public List<Employee> getByPageAndSize(@RequestParam(value = "page") int page, @RequestParam(value = "pageSize") int pageSize) {
         return employeeService.findByPageAndSize(page, pageSize);
     }
 

@@ -39,7 +39,7 @@ public class CompanyControllerTest {
     private CompanyService companyService;
 
     @Test
-    void should_return_list_when_invoke_list() throws Exception {
+    void should_return_all_companies_when_invoke_list() throws Exception {
         List<Company> companies = new ArrayList<>();
         companies.add(new Company("alibaba1", 100));
         companies.add(new Company("tengxun2", 90));
@@ -52,5 +52,17 @@ public class CompanyControllerTest {
                 .andExpect(jsonPath("$[1].companyName", is("tengxun2")));
     }
 
+    @Test
+    void should_return_match_company_when_given_companyName() throws Exception {
+        List<Company> companies = new ArrayList<>();
+        companies.add(new Company("alibaba1", 100));
+        companies.add(new Company("tengxun2", 90));
+
+        when(companyService.findByName(anyString())).thenReturn(companies.get(0));
+
+        ResultActions resultActions = mvc.perform(get("/companies/{companyName}", "alibaba1"));
+        resultActions.andExpect(status().isOk()).
+                andExpect(jsonPath("$.employeesNumber", is(100)));
+    }
 
 }

@@ -17,7 +17,7 @@ public class CompanyService {
         return companyRepository.findAll();
     }
 
-    public List<Company> findByName(String companyName) {
+    public Company findByName(String companyName) {
         return companyRepository.findByName(companyName);
     }
 }

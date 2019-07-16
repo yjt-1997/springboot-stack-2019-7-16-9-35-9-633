@@ -6,6 +6,7 @@ import org.springframework.stereotype.Repository;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Repository
 public class CompanyRepository {
@@ -21,6 +22,7 @@ public class CompanyRepository {
     }
 
     public Company findByName(String companyName) {
-        return findAll().stream().filter(company -> company.getCompanyName().equals(companyName)).findFirst().get();
+        List<Company> filterCompany = findAll().stream().filter(company -> company.getCompanyName().equals(companyName)).collect(Collectors.toList());
+        return filterCompany == null ? null : filterCompany.get(0);
     }
 }

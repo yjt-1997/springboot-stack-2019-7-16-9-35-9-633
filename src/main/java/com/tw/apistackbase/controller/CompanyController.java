@@ -21,7 +21,7 @@ public class CompanyController {
     }
 
     @GetMapping("/companies/{companyName}")
-    public List<Company> findByName(@PathVariable String companyName) {
+    public Company findByName(@PathVariable String companyName) {
         return companyService.findByName(companyName);
     }
 }
