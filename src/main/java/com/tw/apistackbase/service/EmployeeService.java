@@ -20,4 +20,8 @@ public class EmployeeService {
     public Employee findById(int employeeId) {
         return employeeRepository.findById(employeeId);
     }
+
+    public List<Employee> findByPageAndSize(int page, int pageSize) {
+        return employeeRepository.findByPageAndSize(page,pageSize);
+    }
 }
