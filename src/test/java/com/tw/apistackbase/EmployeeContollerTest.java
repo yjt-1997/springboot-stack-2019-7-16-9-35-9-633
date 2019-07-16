@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.hamcrest.Matchers.is;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -42,6 +43,20 @@ public class EmployeeContollerTest {
         when(employeeService.findAll()).thenReturn(employees);
 
         ResultActions resultActions = mvc.perform(get("/employees"));
-        resultActions.andExpect(status().isOk()).andExpect(jsonPath("$[0].id", is(4)));
+        resultActions.andExpect(status().isOk()).
+                andExpect(jsonPath("$[0].id", is(4)))
+                .andExpect(jsonPath("$[1].id", is(11)));
+    }
+
+    @Test
+    void should_return_first_when_invoke_list() throws Exception {
+        List<Employee> employees = new ArrayList<>();
+        employees.add(new Employee(4, "alibaba1", 20, "male", 6000));
+        employees.add(new Employee(11, "tengxun2", 19, "female", 7000));
+
+        when(employeeService.findById(anyInt())).thenReturn(employees.get(0));
+
+        ResultActions resultActions = mvc.perform(get("/employees/{employeeId}", 4));
+        resultActions.andExpect(status().isOk()).andExpect(jsonPath("$.id", is(4)));
     }
 }

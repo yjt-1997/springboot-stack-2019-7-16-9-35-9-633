@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 @Repository
 public class EmployeeRepository {
@@ -25,5 +27,10 @@ public class EmployeeRepository {
 
     public List<Employee> findAll() {
         return new ArrayList<>(employees.values());
+    }
+
+    public Employee findById(int employeeId) {
+        List<Employee> filterEmployee = employees.values().stream().filter(employee -> (employee.getId() == employeeId)).collect(Collectors.toList());
+        return filterEmployee == null ? null : filterEmployee.get(0);
     }
 }
