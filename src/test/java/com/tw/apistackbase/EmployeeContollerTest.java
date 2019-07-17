@@ -1,5 +1,6 @@
 package com.tw.apistackbase;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tw.apistackbase.controller.EmployeeController;
 import com.tw.apistackbase.entity.Employee;
 import com.tw.apistackbase.service.EmployeeService;
@@ -9,6 +10,7 @@ import org.mockito.ArgumentMatchers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
@@ -20,8 +22,8 @@ import java.util.List;
 import static org.hamcrest.Matchers.*;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -44,31 +46,18 @@ public class EmployeeContollerTest {
 
         when(employeeService.findAll()).thenReturn(employees);
 
-        ResultActions resultActions = mvc.perform(get("/employees"));
-        resultActions.andExpect(status().isOk()).
-                andExpect(jsonPath("$[0].id", is(4)))
+        mvc.perform(get("/employees"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].id", is(4)))
                 .andExpect(jsonPath("$[1].id", is(11)));
     }
 
-    /**
-     * 现在有一个困惑，一个方法的具体实现的代码是写在repository类里面还是在哪？
-     * 如果写在repository里面的话，mock的service，对repository类的具体实现并没有调用
-     * 而是我们在thenReturn()方法里面直接把结果返回给service类
-     * 然后service直接return到controller类
-     * 所以我们在thenReturn方法里面传进去的参数其实就是我们的答案
-     * 并没有对这个参数做任何修改，原原本本的返回出来了
-     * @throws Exception
-     */
     @Test
     void should_return_match_employee_when_invoke_findById() throws Exception {
-        List<Employee> employees = new ArrayList<>();
-        employees.add(new Employee(4, "alibaba1", 20, "male", 6000));
-        employees.add(new Employee(11, "tengxun2", 19, "female", 7000));
+        when(employeeService.findById(anyInt())).thenReturn(new Employee(4, "alibaba1", 20, "male", 6000));
 
-        //when(employeeService.findById(anyInt())).thenReturn(employees);
-
-        ResultActions resultActions = mvc.perform(get("/employees/{employeeId}", 4));
-        resultActions.andExpect(status().isOk()).andExpect(jsonPath("$.id", is(4)));
+        mvc.perform(get("/employees/{employeeId}", 4)).
+                andExpect(status().isOk()).andExpect(jsonPath("$.id", is(4)));
     }
 
     @Test
@@ -78,82 +67,58 @@ public class EmployeeContollerTest {
         Employee employee3 = new Employee(6, "alibaba3", 19, "male", 8000);
         Employee employee4 = new Employee(18, "huiwei1", 20, "male", 8000);
         List<Employee> employees = new ArrayList<>(Arrays.asList(employee1, employee2, employee3, employee4));
-        List<Employee> filterEmployees = new ArrayList<>(Arrays.asList(employee3, employee4));
 
+        when(employeeService.findByPageAndSize(anyInt(), anyInt())).thenReturn(employees);
 
-        //when(employeeService.findByPageAndSize(anyInt(), anyInt())).thenReturn(employees);
-        when(employeeService.findByPageAndSize(2, 2)).thenReturn(employees);
-
-        ResultActions resultActions = mvc.perform(get("/employees?page=2&pageSize=2", 2, 2));
+        ResultActions resultActions = mvc.perform(get("/employees?page=1&pageSize=4"));
         resultActions.andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].id", is(6)))
-                .andExpect(jsonPath("$[1].id", is(18)));
+                .andExpect(jsonPath("$[0].id", is(4)))
+                .andExpect(jsonPath("$[1].id", is(11)))
+                .andExpect(jsonPath("$", hasSize(4)));
     }
 
     @Test
     void should_return_match_gender_list_when_invoke_by_gender() throws Exception {
         List<Employee> employees = new ArrayList<>();
-        employees.add(new Employee(4, "alibaba1", 20, "male", 6000));
         employees.add(new Employee(11, "tengxun2", 19, "female", 7000));
 
 
         when(employeeService.findByGender(anyString())).thenReturn(employees);
 
-        ResultActions resultActions = mvc.perform(get("/employees?gender={gender}", "female"));
+        ResultActions resultActions = mvc.perform(get("/employees?gender=female"));
         resultActions.andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].id", is(4)))
-                .andExpect(jsonPath("$[1].id", is(11)));
+                .andExpect(jsonPath("$[0].id", is(11)));
 
     }
 
     @Test
     void should_add_employee_when_add_given_employee() throws Exception {
-        List<Employee> employees = new ArrayList<>();
-        employees.add(new Employee(4, "alibaba1", 20, "male", 6000));
-        employees.add(new Employee(11, "tengxun2", 19, "female", 7000));
-
-
         Employee employee = new Employee(6, "alibaba3", 19, "male", 8000);
 
         when(employeeService.updateOrSave(ArgumentMatchers.any())).thenReturn(employee);
 
-        ResultActions resultActions = mvc.perform(get("/employees?gender={gender}", "female"));
-        resultActions.andExpect(status().isOk())
-                .andExpect(jsonPath("$[2].id", is(6)));
+        mvc.perform(post("/employees").accept(MediaType.APPLICATION_JSON_UTF8)
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .content("{}")).andExpect(status().isOk()).andExpect(jsonPath("$.id", is(6)));
 
     }
 
     @Test
     void should_update_employee_when_add_given_employee() throws Exception {
-        List<Employee> employees = new ArrayList<>();
-        employees.add(new Employee(4, "alibaba1", 20, "male", 6000));
-        employees.add(new Employee(11, "tengxun2", 19, "female", 7000));
-
-
         Employee employee = new Employee(6, "alibaba3", 19, "male", 8000);
-        Class classz = Employee.class;
 
-        //when(employeeService.updateOrSave(any(Class<Employee>))).thenReturn(employee);
+        when(employeeService.updateOrSave(ArgumentMatchers.any())).thenReturn(employee);
 
-        ResultActions resultActions = mvc.perform(get("/employees?gender={gender}", "female"));
-//        resultActions.andExpect(status().isOk())
-//                .andExpect(jsonPath("$[2].id", is(6)));
-
+        mvc.perform(put("/employees").accept(MediaType.APPLICATION_JSON_UTF8)
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .content(new ObjectMapper().writeValueAsString(employee)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id", is(6)));
     }
 
     @Test
     void should_delete_employee_when_delete_given_employeeId() throws Exception {
-        List<Employee> employees = new ArrayList<>();
-        employees.add(new Employee(4, "alibaba1", 20, "male", 6000));
-        employees.add(new Employee(11, "tengxun2", 19, "female", 7000));
-
-
-        //when(employeeService.deleteById(anyInt())).thenReturn(employees);
-
-        ResultActions resultActions = mvc.perform(get("/employees?gender={gender}", "female"));
-//        resultActions.andExpect(status().isOk())
-//                .andExpect(jsonPath("$[2].id", is(6)));
-
+        mvc.perform(delete("/employees/1")).andExpect(status().isOk());
+        verify(employeeService).deleteById(1);
     }
-
 }

@@ -13,7 +13,7 @@ public class EmployeeService {
     @Autowired
     private EmployeeRepository employeeRepository;
 
-    public List<Employee> findAll(){
+    public List<Employee> findAll() {
         return employeeRepository.findAll();
     }
 
@@ -22,7 +22,7 @@ public class EmployeeService {
     }
 
     public List<Employee> findByPageAndSize(int page, int pageSize) {
-        return employeeRepository.findByPageAndSize(page,pageSize);
+        return employeeRepository.findByPageAndSize(page, pageSize);
     }
 
     public List<Employee> findByGender(String gender) {

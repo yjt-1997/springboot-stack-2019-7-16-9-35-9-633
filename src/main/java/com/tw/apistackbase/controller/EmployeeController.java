@@ -33,7 +33,7 @@ public class EmployeeController {
         return employeeService.findByGender(gender);
     }
 
-    @RequestMapping(value = "/employees", params = {"employee"}, method = {RequestMethod.POST, RequestMethod.PUT})
+    @RequestMapping(value = "/employees", method = {RequestMethod.POST, RequestMethod.PUT})
     public Employee updateOrSave(@RequestBody Employee employee) {
         return employeeService.updateOrSave(employee);
     }
