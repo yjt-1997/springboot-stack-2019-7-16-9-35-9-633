@@ -1,0 +1,11 @@
+2019-07-17 14:53:10 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Syntax error in SQL statement "CREATE TABLE ""EMPLOYEE""(
+   ""ID"" INT  AUTO_INCREMENT PRIMARY KEY,
+   ""NAME"" VARCHAR(255) NOT NULL,
+   ""COMPANYID"" INT NOT NULL FOREIGN[*] KEY REFERENCES(COMPANY.ID)
+) "; expected "AS, DEFAULT, GENERATED, ON, NOT, NULL, AUTO_INCREMENT, BIGSERIAL, SERIAL, IDENTITY, NULL_TO_DEFAULT, SEQUENCE, SELECTIVITY, COMMENT, CONSTRAINT, PRIMARY, UNIQUE, NOT, NULL, CHECK, REFERENCES, ,, )"; SQL statement:
+create table `employee`(
+   `id` int  auto_increment PRIMARY KEY,
+   `name` VARCHAR(255) NOT NULL,
+   `companyId` INT NOT NULL foreign key references(company.id)
+) [42001-197]

@@ -35,6 +35,7 @@ public class CompanyService {
     }
 
     public void deleteById(int companyId) {
+        companyRepository.deleteById(companyId);
     }
 
     public List<Employee> findEmployeesByName(String companyName) {

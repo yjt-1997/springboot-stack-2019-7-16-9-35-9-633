@@ -36,7 +36,7 @@ public class EmployeeRepository {
     }
 
     public Employee findById(int employeeId) {
-        List<Employee> filterEmployee = employees.values().stream().filter(employee -> (employee.getId() == employeeId)).collect(Collectors.toList());
+        List<Employee> filterEmployee = findAll().stream().filter(employee -> (employee.getId() == employeeId)).collect(Collectors.toList());
         return filterEmployee == null ? null : filterEmployee.get(0);
     }
 

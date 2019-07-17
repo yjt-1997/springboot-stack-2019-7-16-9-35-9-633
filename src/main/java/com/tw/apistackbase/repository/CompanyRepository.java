@@ -25,4 +25,8 @@ public class CompanyRepository {
         List<Company> filterCompany = findAll().stream().filter(company -> company.getCompanyName().equals(companyName)).collect(Collectors.toList());
         return filterCompany == null ? null : filterCompany.get(0);
     }
+
+    public void deleteById(int companyId) {
+        companies.remove(companyId);
+    }
 }
